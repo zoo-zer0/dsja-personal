@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+
+    <style>
+        body { font-family: 'Comic Sans MS'; background: white; }
+        .dot { cursor: pointer; }
+        .tooltip {
+            position: absolute;
+            background: white;
+            padding: 8px;
+            border: 1px solid gray;
+            font-size: 14px;
+            pointer-events: none;
+        }
+    </style>
+    <body>
+        <svg width="1000" height="800"></svg>
+        <div class="tooltip" style="opacity:0;"></div>
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <script>
+        const width = 1000, height = 800;
+        const gridCols = 5;
+        const sentiments = ["positive", "neutral", "negative"];
+        const facetTitles = {
+        positive: "Positive Conclusion ^_^",
+        neutral: "Neutral Conclusion -_-",
+        negative: "Negative Conclusion *~*"
+        };
+
+        // Example data (replace with your JSON export from Python)
+        d3.json("data.json").then(data => {
+        // Filter valid sentiments
+        data = data.filter(d => sentiments.includes(d.Sentiment));
+
+        // Create SVG
+        const svg = d3.select("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        // Scales
+        const colorScale = d3.scaleLinear()
+            .domain([0, 100])
+            .range(["#9fb5df", "#cc86b7"]);
+
+        // Tooltip
+        const tooltip = d3.select(".tooltip");
+
+        const facetWidth = width / 3;
+        const facetHeight = height - 100;
+
+        sentiments.forEach((sentiment, i) => {
+            const groupData = data.filter(d => d.Sentiment === sentiment);
+            groupData.forEach((d, idx) => {
+            d.dot_x = idx % gridCols;
+            d.dot_y = Math.floor(idx / gridCols);
+            });
+
+            const g = svg.append("g")
+            .attr("transform", `translate(${i * facetWidth + 60}, 150)`);
+
+            // Title
+            g.append("text")
+            .attr("x", facetWidth / 3)
+            .attr("y", -40)
+            .attr("text-anchor", "middle")
+            .style("font-size", "20px")
+            .text(facetTitles[sentiment]);
+
+            // Circles
+            g.selectAll("circle")
+            .data(groupData)
+            .enter().append("circle")
+            .attr("class", "dot")
+            .attr("cx", d => d.dot_x * 40)
+            .attr("cy", d => d.dot_y * 40)
+            .attr("r", 10)
+            .attr("fill", d => colorScale(d['per women']))
+            .on("mouseover", function(event, d) {
+                tooltip.transition().style("opacity", 1);
+                tooltip.html(`
+                <b>Year:</b> ${d.Year}<br>
+                <b>Title:</b> ${d.Title}<br>
+                <b>Demographic:</b> ${d.Demographic}<br>
+                <b>% Women:</b> ${d['per women']}<br>
+                <b>Summary:</b> ${d.summary}
+                `)
+                .style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY - 28) + "px");
+            })
+            .on("mouseout", () => tooltip.transition().style("opacity", 0))
+            .on("click", (event, d) => {
+                if (d.link) window.open(d.link, "_blank");
+            });
+        });
+        });
+        </script>
+    </body>
+</html>

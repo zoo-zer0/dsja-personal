@@ -1,0 +1,150 @@
+/* Font & Color Setup */
+body {
+            font-family: Montserrat;
+            margin: 0;
+            background: #f7f9fc;
+        }
+.scrolly {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+            max-width: 1400px; /* for big screens */
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+.scrolly__graphic {
+            flex: 0 0 75%; /* Chart takes 75% of space */
+            margin-left: 12.5%; /* Margin = 1/8 of screen */
+            height: 700px; /* make it taller for clarity */
+            /*background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);*/
+            padding: 10px;
+            position: sticky;
+            top: 50px;
+        }
+.scrolly__text {
+            flex: 0 0 12.5%; /* Text column is narrow */
+            margin-right: 12.5%;
+            display: flex;
+            flex-direction: column;
+            gap: 80vh; /* spacing for scrollytelling */
+        }
+.step {
+            font-size: 1.1rem;
+            padding: 15px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 2px;
+            margin-bottom: 100px;
+        }
+.active {
+            background: #e0f7fa;
+        }
+svg {
+            width: 100%;
+            height: 100%;
+        }
+.highlight-box {
+            pointer-events: none; /* Don't block tooltips */
+        }
+        /*.highlight {
+            stroke: #fff88f;
+            stroke-width: 6;
+            /*  filter: drop-shadow(3px 0 0 #fff88f)
+                drop-shadow(-3px 0 0 #fff88f)
+                drop-shadow(0 3px 0 #fff88f)
+                drop-shadow(0 -3px 0 #fff88f);
+
+        }*/
+.tooltip {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.884);
+            border: 1px solid #ccc;
+            padding: 8px;
+            font-size: 15px;
+            max-width: 300px;
+            line-height: 1.4em;
+            pointer-events: none;
+            opacity: 0;
+            
+        }
+.axis-label {
+            font-size: 14px;
+            font-weight: bold;
+        }
+header {
+  text-align: center;
+  padding: 3rem 1rem 2rem;
+  background: linear-gradient(135deg, #e0f7fa, #ffffff);
+}
+
+header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  color: #0d47a1; /* Deep blue */
+  margin: 0;
+}
+
+header h2 {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #0288d1;
+  margin-top: 0.5rem;
+}
+
+.intro, .narrative {
+  max-width: 700px;
+  margin: 4rem auto;
+  padding: 0 1rem;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.chart-section {
+  max-width: 1000px;
+  margin: 3rem auto;
+  padding: 1rem;
+}
+
+.chart-section h3 {
+  text-align: center;
+  font-size: 1.6rem;
+  color: #01579b;
+  margin-bottom: 1rem;
+}
+
+.chart-container {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  min-height: 400px;
+}
+
+footer {
+  text-align: center;
+  padding: 2rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Color Highlights */
+a {
+  color: #d81b60; /* Coral accent for links */
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 2rem;
+  }
+  header h2 {
+    font-size: 1.2rem;
+  }
+}

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+    <head>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">    <style>
+        body { font-family: Montserrat; }
+        .tooltip {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.884);
+        border: 1px solid #ccc;
+        padding: 8px;
+        font-size: 15px;
+        max-width: 300px;
+        line-height: 1.4em;
+        pointer-events: none;
+        opacity: 0;
+        
+        }
+        .axis-label {
+        font-size: 14px;
+        font-weight: bold;
+        }
+    </style>
+    </head>
+    <body>
+        <h1>hello??</h1>
+        <div id="chart"></div>
+        <script>
+
+        // ✅ Load data and build chart inside .then()
+            d3.json("data.json").then(data => {
+                // Ensure numeric types
+                data.forEach(d => {
+                    d.Year = +d.Year;
+                    d.perWomen = d['per women'] === null ? null : +d['per women'];
+                });
+
+                // Dimensions
+                const margin = {top: 50, right: 30, bottom: 50, left: 60};
+                const width = 900 - margin.left - margin.right;
+                const height = 600 - margin.top - margin.bottom;
+
+                // Create SVG
+                const svg = d3.select("#chart")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+                // Group data by year
+                const grouped = d3.group(data, d => d.Year);
+
+                // Sort by Year
+                const years = Array.from(grouped.keys()).sort(d3.ascending);
+
+                // Compute max stack
+                const maxStack = d3.max(grouped, g => g[1].length);
+
+                // Scales
+                const x = d3.scaleBand()
+                .domain(years)
+                .range([0, width])
+                .padding(0.3);
+
+                const barHeight = 18;
+                const totalStackHeight = maxStack * (barHeight);
+
+                const y = d3.scaleLinear()
+                    .domain([0, 25])
+                    .range([height, height-(25*barHeight)]);
+
+                // Color scale
+                const colorScale = d3.scaleLinear()
+                .domain([0, 100])
+                .range(["#b3bfe0", "#b80090"]);
+
+                const tooltip = d3.select("body").append("div").attr("class", "tooltip");
+
+                // Draw bars
+                years.forEach(year => {
+                    const studies = grouped.get(year)
+                        .sort((a, b) => {
+                            const aVal = a.perWomen == null ? -1 : a.perWomen;
+                            const bVal = b.perWomen == null ? -1 : b.perWomen;
+                            return aVal - bVal;
+                        });                    let stackPos = 0;
+                    studies.forEach(study => {
+                        const color = study.perWomen == null ? "#757474" : colorScale(study.perWomen);
+                        
+                        svg.append("rect")
+                        .attr("x", x(year))
+                        .attr("y", height - (stackPos * 18)-18)
+                        .attr("width", x.bandwidth()+2)
+                        .attr("height", 18)
+                        .attr("fill", color)
+                        .attr("stroke",'#fff')
+                        .attr("stroke-width",1.5)
+                        .on("mouseover", function(event) {
+                            d3.select(this)
+                                //.attr("stroke", "#000")      // black border on hover
+                                //.attr("stroke-width", 1.5)    // make border thicker
+                                .attr("fill", d3.color(color).copy({opacity: 0.5})); // lighter color on hover
+                        })
+                        .on("mousemove", (event) => {
+                            tooltip
+                            .style("opacity", 1)
+                            .html(`
+                                <b>Title:</b> ${study.Title}<br>
+                                <b>Demographic:</b> ${study.Demographic}<br>
+                                <b>% Women:</b> ${study.perWomen != null ? study.perWomen : 'Missing'}<br>
+                                <br><b>Summary:</b> ${study.summary}
+                            `)
+                            .style("left", (event.pageX + 15) + "px")
+                            .style("top", (event.pageY - 28) + "px");
+                        })
+                        .on("mouseout", function() {
+                            d3.select(this)
+                                .attr("stroke", "#fff")       // reset to original border color
+                                .attr("stroke-width", 1.5)   // reset border thickness
+                                .attr("fill", color);
+                            tooltip.style("opacity", 0);
+                        })
+                        .on("click", function(){
+                            if(study.link){
+                                window.open(study.link, "_blank");
+                            }
+                        });
+                        stackPos += 1;
+                    });
+                });
+
+                // Axes
+                svg.append("g")
+                .attr("transform", `translate(0,${height})`)
+                .call(d3.axisBottom(x));
+
+                svg.append("g")
+                    .call(d3.axisLeft(y)
+                        .tickValues([5, 10, 15, 20, 25]) // custom tick values
+                    );
+                svg.append("text")
+                .attr("class", "axis-label")
+                .attr("x", width / 2)
+                .attr("y", height + 40)
+                .style("text-anchor", "middle")
+                .text("Year");
+
+                svg.append("text")
+                .attr("class", "axis-label")
+                .attr("transform", "rotate(-90)")
+                .attr("x", -height / 2)
+                .attr("y", -45)
+                .style("text-anchor", "middle")
+                .text("Number of Studies");
+
+                svg.append("text")
+                .attr("x", width / 2)
+                .attr("y", -20)
+                .attr("text-anchor", "middle")
+                .style("font-size", "20px")
+                .text("Number of Studies Per Year (colored by % Women)");
+            });
+
+            </script>
+    </body>
+</html>
