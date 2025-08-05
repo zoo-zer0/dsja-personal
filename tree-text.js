@@ -1,8 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // Fade for .explanation (already in your code)
   const treeSection = document.querySelector("#tree-section");
-  const explanation = document.querySelector(".tree-explanation");
+  const explanation = document.querySelector(".explanation");
 
-  const observer = new IntersectionObserver(
+  const sectionObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -12,10 +13,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     },
-    { threshold: 0.1 } // triggers when 10% of section is visible
+    { threshold: 0.1 }
   );
 
-  observer.observe(treeSection);
+  sectionObserver.observe(treeSection);
+
   const steps = document.querySelectorAll(".step");
 
   const stepObserver = new IntersectionObserver(
