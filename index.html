@@ -148,7 +148,7 @@
     width: 90%;
     opacity: 0;
 }
-.explanation{
+.explanation.visible{
     opacity:1;
 }
 
@@ -182,6 +182,12 @@
   margin-bottom: 40px;
   position: absolute;
   width: 90%;
+  opacity:0;
+transition: opacity 0.8s ease-in-out;
+
+}
+#tree-section .tree-text .step.visible {
+  opacity:1;
 }
 
 
@@ -221,10 +227,9 @@ Somehow, the scientific evidence behind the flashy YouTube thumbnails and influe
             <div class="tree-graphic">
                 <div class="explanation">
                 <em>Hover over a <strong>dot</strong> to see its source. <br>Hover over a <strong>line</strong> to read the quoted citation.</em>
-            </div>
+                </div>
                 <svg id="tree-svg"></svg>
-            </div>
-            
+            </div>            
             <div class="tree-text">
                 <div class="step" data-step="0">
 I began tracing this pipeline through a story in The Joseon Ilbo. The article covered a Vogue video featuring Jennie from Blackpink introducing her nightly cold plunging routine.
