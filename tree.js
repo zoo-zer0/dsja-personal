@@ -199,28 +199,72 @@ scroller
       // Reset to only root
       nodes.select("circle").style("opacity", d => d.depth === 0 ? 1 : 0);
       links.style("opacity", 0);
+      const rootData = nodes.filter(d => d.depth === 0).datum();
+        nodes.filter(d => d.data.id === 0).select("circle").attr("stroke-width", 2).attr("stroke", "#9E9E9E");
 
+        tooltip.html(`
+                
+                <span class = "highlight">${rootData.data.type}</span><br>
+                <strong>${rootData.data.citation || rootData.data.Title || "No title available"}</strong><br>
+                ${
+                    rootData.data.femaleParticipation != null
+                        ? `Female Participation: ${(rootData.data.femaleParticipation * 100).toFixed(1)}%<br>`
+                        : rootData.data['per women'] != null
+                            ? `Female Participation: ${rootData.data['per women']}%<br>`
+                            : ""
+                }
+                ${rootData.data.doi ? `<a href="${rootData.data.doi}" target="_blank">DOI Link</a><br>` : ""}
+                ${rootData.data.screenshot ? `<img src="${rootData.data.screenshot}" alt="screenshot" style="max-width:100%; height:auto; border-radius:8px;"/>` : ""}
+            `).style("left", "100px").style("top", "1344px").transition().duration(700).style("opacity",1);
 
-      nodes.filter(d => d.data.id === 0).select("circle").attr("stroke-width", 2).attr("stroke", "#9E9E9E");
 }
     if (stepIndex === 1) {
       // Show first edge + first child node
         links.filter(d => d.source.depth === 0) // edges from root to layer 1
         .transition().duration(500).style("opacity", 1);
         nodes.filter(d => d.depth === 1) // all layer 1 nodes
-        .select("circle").transition().duration(500).style("opacity", 1);}
+        .select("circle").transition().duration(500).style("opacity", 1);
+        const source1 = nodes.filter(d => d.data.id === 1).datum();
+        tooltip.transition()
+        .duration(500)
+        .style("opacity", 0)
+        .on("end", () =>{
+            tooltip.html(`${source1.data.quote || "No quote"}`)
+            .style("left", "100px").style("top", "1473px").transition().duration(500).style("opacity",1);
 
-        //
-        links.filter(d => d.target.data.id === 1).attr("stroke-width", 2.5).attr("opacity", 0.8);
+            //
+            links.filter(d => d.target.data.id === 1).attr("stroke-width", 2.5).attr("opacity", 0.8);
+            });
+
+    }
         
-
+        
         
     if (stepIndex === 2) {
       // Highlight first child node
       nodes.filter((d,i)=>i===1).select("circle");
 
         nodes.filter(d => d.data.id === 1).select("circle").attr("stroke-width", 2).attr("stroke", "#9E9E9E");
+        const rootData = nodes.filter(d => d.depth === 1).datum();
 
+        tooltip.transition()
+        .duration(500)
+        .style("opacity", 0)
+        .on("end", () =>{tooltip.html(`
+                
+                <span class = "highlight">${rootData.data.type}</span><br>
+                <strong>${rootData.data.citation || rootData.data.Title || "No title available"}</strong><br>
+                ${
+                    rootData.data.femaleParticipation != null
+                        ? `Female Participation: ${(rootData.data.femaleParticipation * 100).toFixed(1)}%<br>`
+                        : rootData.data['per women'] != null
+                            ? `Female Participation: ${rootData.data['per women']}%<br>`
+                            : ""
+                }
+                ${rootData.data.doi ? `<a href="${rootData.data.doi}" target="_blank">DOI Link</a><br>` : ""}
+                ${rootData.data.screenshot ? `<img src="${rootData.data.screenshot}" alt="screenshot" style="max-width:100%; height:auto; border-radius:8px;"/>` : ""}
+            `).style("left", "100px").style("top", "1924px").transition().duration(500).style("opacity",1);
+            });
     }
     if (stepIndex === 3) {
       // Show edge to grandchild
@@ -230,6 +274,13 @@ scroller
       nodes.filter((d,i)=>i===2).select("circle").transition().duration(500).style("opacity",1);
 
         links.filter(d => d.target.data.id === 14).attr("stroke-width", 2.5).attr("opacity", 0.8);
+        const source1 = nodes.filter(d => d.data.id === 14).datum();
+        tooltip.transition()
+        .duration(500)
+        .style("opacity", 0)
+        .on("end", () =>{        tooltip.html(`${source1.data.quote || "No quote"}`)
+        .style("left", "100px").style("top", "2142px").transition().duration(500).style("opacity",1);
+    });
 
     }
     if (stepIndex === 4) {
@@ -238,7 +289,26 @@ scroller
       links.filter(d => d.source.depth === 1)
     .transition().style("opacity", 1);
     nodes.filter(d => d.data.id === 14).select("circle").attr("stroke-width", 2).attr("stroke", "#9E9E9E");
-
+            const rootData = nodes.filter(d => d.data.id === 14).datum();
+    tooltip.transition()
+        .duration(500)
+        .style("opacity", 0)
+        .on("end", () =>{
+            tooltip.html(`
+                        
+                        <span class = "highlight">${rootData.data.type}</span><br>
+                        ${rootData.data.citation || rootData.data.Title || "No title available"}<br>
+                        ${
+                            rootData.data.femaleParticipation != null
+                                ? `Female Participation: ${(rootData.data.femaleParticipation * 100).toFixed(1)}%<br>`
+                                : rootData.data['per women'] != null
+                                    ? `Female Participation: ${rootData.data['per women']}%<br>`
+                                    : ""
+                        }
+                        ${rootData.data.doi ? `<a href="${rootData.data.doi}" target="_blank">DOI Link</a><br>` : ""}
+                        ${rootData.data.screenshot ? `<img src="${rootData.data.screenshot}" alt="screenshot" style="max-width:100%; height:auto; border-radius:8px;"/>` : ""}
+                    `).style("left", "100px").style("top", "2612px").transition().duration(500).style("opacity",1);
+        });
     }
     if (stepIndex === 5) {
       // Final state: everything visible
@@ -249,4 +319,3 @@ scroller
 
 
 });
-
